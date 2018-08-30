@@ -1,0 +1,9 @@
+.DS_Store
+*.xcuserdata
+*.xcuserstate
+*.xccheckout
+Pods/
+xcuserdata/
+.idea/*
+.idea*
+\.idea*
