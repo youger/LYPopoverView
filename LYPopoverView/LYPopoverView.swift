@@ -22,10 +22,6 @@ fileprivate let LYPopoverButtonHeight : CGFloat = 44
 
 class LYPopoverView: UIView {
     
-    open var popoverViewPadding: CGFloat = 8
-    public var popoverDirection: LYPopoverDirection = .topTobottom
-    
-    weak var delegate: LYPopoverViewDelegate?
     fileprivate var _shadowView: UIView = UIView()
     fileprivate var _contentView: UIView = UIView()
     fileprivate var _arrowImageView: UIImageView = UIImageView()
@@ -33,6 +29,19 @@ class LYPopoverView: UIView {
     fileprivate var _popoverItems : [LYPopoverItem]?
     fileprivate var _cellCount : Int = 0
     fileprivate var _shadowTopAnchor: NSLayoutConstraint?
+    
+    open var popoverViewPadding: CGFloat = 8
+    open var popoverDirection: LYPopoverDirection = .topTobottom
+    open var popoverBackgroundColor: UIColor = UIColor.black{
+        didSet(newValue){
+            _arrowImageView.image = _arrowImageView.image?.imageWithColor(color1: newValue)
+            _contentView.backgroundColor = newValue
+        }
+    }
+    open var textColor = UIColor.white
+    open var separatorColor = UIColor.white
+    
+    weak var delegate: LYPopoverViewDelegate?
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -58,10 +67,8 @@ class LYPopoverView: UIView {
     
     func configureSubviews()
     {
-        self.clipsToBounds = true
-    
         _shadowView.translatesAutoresizingMaskIntoConstraints = false
-        _shadowView.backgroundColor = UIColor.init(white: 1, alpha: 0.2)
+        _shadowView.backgroundColor = UIColor.init(white: 1, alpha: 1)
         _shadowView.layer.cornerRadius = 5.0
         _shadowView.layer.shadowColor = UIColor.black.cgColor
         _shadowView.layer.shadowOffset = CGSize.zero
@@ -79,7 +86,7 @@ class LYPopoverView: UIView {
         
         _contentView.translatesAutoresizingMaskIntoConstraints = false
         _contentView.clipsToBounds = true
-        _contentView.backgroundColor = UIColor.black
+        _contentView.backgroundColor = popoverBackgroundColor
         _contentView.layer.cornerRadius = 5.0
         addSubview(_contentView)
         
@@ -136,8 +143,8 @@ class LYPopoverView: UIView {
     func drawArrowImage(){
         
         let scale = UIScreen.main.scale
-        let width = 20 * scale
-        let height = 10 * scale
+        let width = LYPopoverArrowWidth * scale
+        let height = LYPopoverArrowHeight * scale
         
         UIGraphicsBeginImageContextWithOptions(CGSize(width: width, height: height),  false, scale)
         let ctx = UIGraphicsGetCurrentContext()
@@ -148,8 +155,12 @@ class LYPopoverView: UIView {
         path.addLine(to: CGPoint.init(x: 0, y: height))
         
         ctx?.addPath(path.cgPath)
-        ctx?.setFillColor(red: 0, green: 0, blue: 0, alpha: 1)
+        ctx?.setFillColor(popoverBackgroundColor.cgColor)
         ctx?.fillPath()
+        
+//        ctx?.saveGState()
+//        ctx?.setShadow(offset: CGSize.init(width: 1, height: 2), blur: 2, color: UIColor.red.cgColor)
+//        ctx?.restoreGState()
         
         let arrowImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
@@ -163,7 +174,7 @@ class LYPopoverView: UIView {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(title, for: .normal)
         button.addTarget(self, action: #selector(buttonClicked(sender:)), for: .touchUpInside)
-        button.setTitleColor(UIColor.white, for: .normal)
+        button.setTitleColor(textColor, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
         button.titleLabel?.lineBreakMode = .byTruncatingTail
         button.tag = index + LYPopoverViewButtonBaseTag
@@ -172,7 +183,7 @@ class LYPopoverView: UIView {
             
             let separatorLine = UIView()
             separatorLine.translatesAutoresizingMaskIntoConstraints = false
-            separatorLine.backgroundColor = UIColor.white
+            separatorLine.backgroundColor = separatorColor
             button.addSubview(separatorLine)
             
             button.addConstraints([
@@ -193,7 +204,10 @@ class LYPopoverView: UIView {
     @objc func buttonClicked(sender: UIButton){
         
         let index: Int = sender.tag - LYPopoverViewButtonBaseTag
-        delegate?.popoverView(self, index: index)
+        
+        if delegate != nil {
+            delegate?.popoverView(self, index: index)
+        }
     
         guard _popoverItems == nil else {
             
@@ -298,16 +312,16 @@ class LYPopoverView: UIView {
         }
         
         var fromY = max(0, rect.midY)
-        originFrame.origin.y = fromY + 5
-        
         if fromY + originFrame.height < (superview?.height)! {
             
             setPopoverDirection(direction: .topTobottom)
+            fromY = max(0, rect.maxY)
+            originFrame.origin.y = fromY + 5
 
         }else{
             
             setPopoverDirection(direction: .bottomToTop)
-            fromY = rect.maxY - 5
+            fromY = rect.minY - 5
             originFrame.origin.y = fromY - originFrame.height - popoverViewPadding
         }
         return originFrame

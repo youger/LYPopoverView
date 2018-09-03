@@ -12,7 +12,7 @@ class ViewController: UIViewController, LYPopoverViewDelegate {
     
     func popoverView(_ popoverView: LYPopoverView, index: Int) {
         
-        print(index)
+        print("clicked index \(index)")
     }
 
     override func viewDidLoad() {
@@ -26,6 +26,23 @@ class ViewController: UIViewController, LYPopoverViewDelegate {
     }
     
     lazy var popverView = LYPopoverView.init(frame: CGRect.init(x: 0, y: 0, width:LYPopoverViewWidth , height: 0), titles:["test", "test1", "标签"])
+    
+    func configurePopoverViewInterface() {
+        
+        if arc4random()%2 == 0 {
+         
+            popverView.popoverBackgroundColor = UIColor.white
+            popverView.textColor = UIColor.black
+            popverView.separatorColor = UIColor.gray
+        }else{
+            
+            popverView.popoverBackgroundColor = UIColor.black
+            popverView.textColor = UIColor.white
+            popverView.separatorColor = UIColor.white
+        }
+    }
+    
+    lazy var rectangleView = UIImageView.init()
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         
@@ -36,7 +53,33 @@ class ViewController: UIViewController, LYPopoverViewDelegate {
         
         popverView.resetTitles(titles: array[Int(arc4random()%3)])
         popverView.top = (touchPoint?.y)!
-        popverView.showFromRect(rect: CGRect.init(origin: touchPoint!, size:.zero))
+        configurePopoverViewInterface()
+        rectangleView.center = touchPoint!
+        rectangleView.size = CGSize(width: 60, height: 44)
+        //rectangleView.layer.borderColor = UIColor.red.cgColor
+        //rectangleView.layer.borderWidth = 0.5
+        view.addSubview(rectangleView)
+        //let rect = CGRect.init(origin: touchPoint!, size:CGSize(width: 100, height: 50))
+        
+        rectangleView.image = drawRectangle(rect: rectangleView.frame)
+        popverView.showFromRect(rect: rectangleView.frame)
+    }
+    
+    func drawRectangle(rect:CGRect)-> UIImage {
+        
+        UIGraphicsBeginImageContext(rect.size)
+        let path = UIBezierPath.init(rect: CGRect.init(origin: .zero, size: rect.size)).cgPath
+        let ctx = UIGraphicsGetCurrentContext()
+        ctx?.setStrokeColor(UIColor.red.cgColor)
+        ctx?.addPath(path)
+        ctx?.setShadow(offset: .zero, blur: 5)
+        ctx?.setShadow(offset: .zero, blur: 5, color: UIColor.red.cgColor)
+        ctx?.stroke(CGRect.init(origin: .zero, size: rect.size))
+        
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return image!
     }
 }
 
