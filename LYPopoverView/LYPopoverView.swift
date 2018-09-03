@@ -15,7 +15,7 @@ enum LYPopoverDirection {
 
 let LYPopoverViewWidth: CGFloat = 120
 fileprivate let LYPopoverViewButtonBaseTag = 100
-fileprivate let LYPopoverViewContentPadding: CGFloat = 3
+fileprivate let LYPopoverViewContentPadding: CGFloat = 2
 fileprivate let LYPopoverArrowHeight: CGFloat = 5
 fileprivate let LYPopoverArrowWidth: CGFloat = 12
 fileprivate let LYPopoverButtonHeight : CGFloat = 44
@@ -67,21 +67,22 @@ class LYPopoverView: UIView {
     
     func configureSubviews()
     {
+        self.clipsToBounds = true
         _shadowView.translatesAutoresizingMaskIntoConstraints = false
         _shadowView.backgroundColor = UIColor.init(white: 1, alpha: 1)
         _shadowView.layer.cornerRadius = 5.0
         _shadowView.layer.shadowColor = UIColor.black.cgColor
         _shadowView.layer.shadowOffset = CGSize.zero
         _shadowView.layer.shadowOpacity = 1.0
-        _shadowView.layer.shadowRadius = 2
+        _shadowView.layer.shadowRadius = LYPopoverViewContentPadding
         _shadowView.layer.masksToBounds = false
         addSubview(_shadowView)
         _shadowTopAnchor = _shadowView.topAnchor.constraint(equalTo: self.topAnchor, constant: LYPopoverArrowHeight)
         self.addConstraints([
             _shadowTopAnchor!,
-            _shadowView.leftAnchor.constraint(equalTo: self.leftAnchor),
-            _shadowView.rightAnchor.constraint(equalTo: self.rightAnchor),
-             _shadowView.heightAnchor.constraint(equalTo: self.heightAnchor, constant: -LYPopoverArrowHeight),
+            _shadowView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: LYPopoverViewContentPadding),
+            _shadowView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -LYPopoverViewContentPadding),
+             _shadowView.heightAnchor.constraint(equalTo: self.heightAnchor, constant: -LYPopoverArrowHeight-LYPopoverViewContentPadding),
         ])
         
         _contentView.translatesAutoresizingMaskIntoConstraints = false
@@ -158,8 +159,16 @@ class LYPopoverView: UIView {
         ctx?.setFillColor(popoverBackgroundColor.cgColor)
         ctx?.fillPath()
         
+//        let bezier2Path = UIBezierPath()
+//        bezier2Path.move(to: CGPoint.init(x: 0, y: height))
+//        bezier2Path.addLine(to: CGPoint.init(x: width / 2.0, y: 0))
+//        bezier2Path.addLine(to: CGPoint.init(x: width, y: height))
+//
 //        ctx?.saveGState()
-//        ctx?.setShadow(offset: CGSize.init(width: 1, height: 2), blur: 2, color: UIColor.red.cgColor)
+//        ctx?.setShadow(offset: CGSize.init(width: 0, height: 2), blur: 2, color: UIColor.red.cgColor)
+//        UIColor.black.setStroke()
+//        bezier2Path.lineWidth = 4
+//        bezier2Path.stroke()
 //        ctx?.restoreGState()
         
         let arrowImage = UIGraphicsGetImageFromCurrentImageContext()
@@ -198,7 +207,7 @@ class LYPopoverView: UIView {
     
     override func sizeThatFits(_ size: CGSize) -> CGSize {
      
-        return CGSize(width: size.width, height: CGFloat(_cellCount) * LYPopoverButtonHeight + LYPopoverArrowHeight)
+        return CGSize(width: size.width, height: CGFloat(_cellCount) * LYPopoverButtonHeight + LYPopoverArrowHeight + LYPopoverViewContentPadding)
     }
     
     @objc func buttonClicked(sender: UIButton){
@@ -260,9 +269,9 @@ class LYPopoverView: UIView {
             
         }else if (popoverDirection == .bottomToTop) {
             
-            _shadowTopAnchor?.constant = 0
+            _shadowTopAnchor?.constant = LYPopoverViewContentPadding
             _arrowImageView.transform = CGAffineTransform.init(rotationAngle: CGFloat.pi)
-            _arrowImageView.top = CGFloat(_cellCount) * LYPopoverButtonHeight - 0.5
+            _arrowImageView.top = CGFloat(_cellCount) * LYPopoverButtonHeight +  LYPopoverViewContentPadding - 0.5
         }
         layoutIfNeeded()
     }

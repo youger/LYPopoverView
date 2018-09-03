@@ -12,6 +12,11 @@ class LYPopoverItem {
     
     var title: String = ""
     var icon: String = ""
-    var clickedBlock = ((Int)->Void).self
+    var clickedBlock:os_function_t?
     
+    init(title:String, icon: String) {
+        
+        self.title = title
+        self.icon = icon
+    }
 }
