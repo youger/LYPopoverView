@@ -67,14 +67,12 @@ class ViewController: UIViewController, LYPopoverViewDelegate {
             popverView.resetItems(items: menus as! [LYPopoverItem])
         }
         
-        popverView.top = (touchPoint?.y)!
         configurePopoverViewInterface()
         rectangleView.center = touchPoint!
         rectangleView.size = CGSize(width: 60, height: 44)
+        view.addSubview(rectangleView)
         //rectangleView.layer.borderColor = UIColor.red.cgColor
         //rectangleView.layer.borderWidth = 0.5
-        view.addSubview(rectangleView)
-        //let rect = CGRect.init(origin: touchPoint!, size:CGSize(width: 100, height: 50))
         
         rectangleView.image = drawRectangle(rect: rectangleView.frame)
         popverView.showFromRect(rect: rectangleView.frame)
