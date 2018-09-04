@@ -10,5 +10,5 @@ import Foundation
 
 protocol LYPopoverViewDelegate:AnyObject {
  
-    func popoverView(_ popoverView: LYPopoverView, index: Int)
+     func popoverView(_ popoverView: LYPopoverView, index: Int)
 }

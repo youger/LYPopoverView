@@ -222,7 +222,7 @@ class LYPopoverView: UIView {
             
             if (index < (_popoverItems?.count)!) {
                 let item = _popoverItems![index]
-                //item.clickedBlock(index)
+                item.clickedBlock?(index)
             }
             return
         }
@@ -297,7 +297,7 @@ class LYPopoverView: UIView {
         var originFrame = frame
         let midX = rect.midX
         let halfWidth = originFrame.width/2.0
-        let cornerPadding: CGFloat = 2.5
+        let cornerPadding: CGFloat = 2.5 + LYPopoverViewContentPadding
         _arrowImageView.centerX = halfWidth
         
         if midX < halfWidth {

@@ -12,7 +12,7 @@ class ViewController: UIViewController, LYPopoverViewDelegate {
     
     func popoverView(_ popoverView: LYPopoverView, index: Int) {
         
-        print("clicked index \(index)")
+        print("clicked title at index: \(index)")
     }
 
     override func viewDidLoad() {
@@ -47,11 +47,26 @@ class ViewController: UIViewController, LYPopoverViewDelegate {
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         
         view.addSubview(popverView)
-        popverView.delegate = self
         let touchPoint = touches.first?.location(in: view)
-        let array = [["我我哦我", "滴滴滴", "卡卡卡", "嘛嘛嘛"],["发发发发", "明明"],["肉肉", "好", "谢谢"]]
         
-        popverView.resetTitles(titles: array[Int(arc4random()%3)])
+        func createItem(_ title: String) -> LYPopoverItem{
+            let item = LYPopoverItem(title: title, icon: nil)
+            item.clickedBlock = { index in
+                print("clicked item at index: \(index)")
+            }
+            return item
+        }
+        let array = [["我我哦我", "滴滴滴", "卡卡卡", "嘛嘛嘛"],[createItem("发发发发"), createItem("明明")],["肉肉", "好", "谢谢"]]
+        
+        let menus = array[Int(arc4random()%3)]
+        if menus is [String]  {
+            popverView.delegate = self
+            popverView.resetTitles(titles: menus as! [String])
+        }else if menus is [LYPopoverItem]{
+            popverView.delegate = nil
+            popverView.resetItems(items: menus as! [LYPopoverItem])
+        }
+        
         popverView.top = (touchPoint?.y)!
         configurePopoverViewInterface()
         rectangleView.center = touchPoint!
