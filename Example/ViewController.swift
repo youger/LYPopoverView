@@ -36,7 +36,7 @@ class ViewController: UIViewController, LYPopoverViewDelegate {
             popverView.separatorColor = UIColor.gray
         }else{
             
-            popverView.popoverBackgroundColor = UIColor.black
+            popverView.popoverBackgroundColor = UIColor.brown
             popverView.textColor = UIColor.white
             popverView.separatorColor = UIColor.white
         }

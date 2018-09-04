@@ -34,8 +34,9 @@ class LYPopoverView: UIView {
     open var popoverDirection: LYPopoverDirection = .topTobottom
     open var popoverBackgroundColor: UIColor = UIColor.black{
         didSet(newValue){
-            _arrowImageView.image = _arrowImageView.image?.imageWithColor(color1: newValue)
+            //_arrowImageView.image = _arrowImageView.image?.imageWithColor(color1: newValue)
             _contentView.backgroundColor = newValue
+            drawArrowImage()
         }
     }
     open var textColor = UIColor.white
@@ -145,31 +146,29 @@ class LYPopoverView: UIView {
         
         let scale = UIScreen.main.scale
         let width = LYPopoverArrowWidth * scale
-        let height = LYPopoverArrowHeight * scale
+        let height = LYPopoverArrowHeight * scale + 2
         
         UIGraphicsBeginImageContextWithOptions(CGSize(width: width, height: height),  false, scale)
         let ctx = UIGraphicsGetCurrentContext()
         let path = UIBezierPath()
-        path.move(to: CGPoint.init(x: 0, y: height))
-        path.addLine(to: CGPoint.init(x: width, y: height))
-        path.addLine(to: CGPoint.init(x: width / 2.0, y: 0))
-        path.addLine(to: CGPoint.init(x: 0, y: height))
+        path.move(to: CGPoint.init(x: 1, y: height))
+        path.addLine(to: CGPoint.init(x: width - 1, y: height))
+        path.addLine(to: CGPoint.init(x: width / 2.0, y: 1))
+        path.addLine(to: CGPoint.init(x: 1, y: height))
         
         ctx?.addPath(path.cgPath)
-        ctx?.setFillColor(popoverBackgroundColor.cgColor)
+        ctx?.setFillColor(_contentView.backgroundColor!.cgColor)
         ctx?.fillPath()
         
-//        let bezier2Path = UIBezierPath()
-//        bezier2Path.move(to: CGPoint.init(x: 0, y: height))
-//        bezier2Path.addLine(to: CGPoint.init(x: width / 2.0, y: 0))
-//        bezier2Path.addLine(to: CGPoint.init(x: width, y: height))
-//
-//        ctx?.saveGState()
-//        ctx?.setShadow(offset: CGSize.init(width: 0, height: 2), blur: 2, color: UIColor.red.cgColor)
-//        UIColor.black.setStroke()
-//        bezier2Path.lineWidth = 4
-//        bezier2Path.stroke()
-//        ctx?.restoreGState()
+        let bezier2Path = UIBezierPath()
+        bezier2Path.move(to: CGPoint.init(x: 0, y: height))
+        bezier2Path.addLine(to: CGPoint.init(x: width / 2.0, y: 0))
+        bezier2Path.addLine(to: CGPoint.init(x: width, y: height))
+
+        ctx?.saveGState()
+        ctx?.setShadow(offset: CGSize.init(width: 0, height: -2), blur: 2, color: UIColor.black.cgColor)
+        bezier2Path.stroke(with: .color, alpha: 0.6)
+        ctx?.restoreGState()
         
         let arrowImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
