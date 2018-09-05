@@ -12,10 +12,24 @@ class LYPopoverItem {
     
     var title: String = ""
     var icon: String?
-    var clickedBlock : ((Int)->Void)?
+    //var clickedBlock : ((Int)->Void)?
  
     init(title: String, icon: String?) {
         self.title = title
         self.icon = icon
+    }
+    
+    private var clickedBlock : ((Int)->Void)?
+    
+    func setClickedBlock<Object : AnyObject>(delegate: Object, callback: @escaping (Object, Int) -> Void) {
+        self.clickedBlock = { [weak delegate] index in
+            if let delegate = delegate {
+                callback(delegate, index)
+            }
+        }
+    }
+    
+    func clickedBlockImp(_ index:Int) {
+        self.clickedBlock?(index)
     }
 }

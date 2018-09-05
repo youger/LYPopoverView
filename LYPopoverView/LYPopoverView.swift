@@ -215,15 +215,16 @@ class LYPopoverView: UIView {
             delegate?.popoverView(self, index: index)
         }
     
+        dismiss()
+        
         guard _popoverItems == nil else {
             
             if (index < (_popoverItems?.count)!) {
                 let item = _popoverItems![index]
-                item.clickedBlock?(index)
+                item.clickedBlockImp(index)
             }
             return
         }
-        dismiss()
     }
     
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {

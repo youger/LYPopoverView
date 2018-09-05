@@ -8,13 +8,10 @@
 
 import UIKit
 
-class ViewController: UIViewController, LYPopoverViewDelegate {
+class ViewController: UIViewController {
     
-    func popoverView(_ popoverView: LYPopoverView, index: Int) {
-        
-        print("clicked title at index: \(index)")
-    }
-
+    var menus: [Any]?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -23,6 +20,21 @@ class ViewController: UIViewController, LYPopoverViewDelegate {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    deinit {
+        print("dealloc")
+    }
+    
+    func pushViewController(_ atIndex:Int) {
+        
+        let viewController = storyboard?.instantiateViewController(withIdentifier: "ViewController")
+        if menus is [String]  {
+            viewController?.title = menus?[atIndex] as? String
+        }else if menus is [LYPopoverItem]{
+            viewController?.title = (menus?[atIndex] as? LYPopoverItem)?.title
+        }
+        navigationController?.pushViewController(viewController!, animated: true)
     }
     
     lazy var popverView = LYPopoverView.init(frame: CGRect.init(x: 0, y: 0, width:LYPopoverViewWidth , height: 0), titles:["test", "test1", "标签"])
@@ -49,16 +61,7 @@ class ViewController: UIViewController, LYPopoverViewDelegate {
         view.addSubview(popverView)
         let touchPoint = touches.first?.location(in: view)
         
-        func createItem(_ title: String) -> LYPopoverItem{
-            let item = LYPopoverItem(title: title, icon: nil)
-            item.clickedBlock = { index in
-                print("clicked item at index: \(index)")
-            }
-            return item
-        }
-        let array = [["我我哦我", "滴滴滴", "卡卡卡", "嘛嘛嘛"],[createItem("发发发发"), createItem("明明")],["肉肉", "好", "谢谢"]]
-        
-        let menus = array[Int(arc4random()%3)]
+        menus = getMenus()
         if menus is [String]  {
             popverView.delegate = self
             popverView.resetTitles(titles: menus as! [String])
@@ -76,6 +79,21 @@ class ViewController: UIViewController, LYPopoverViewDelegate {
         
         rectangleView.image = drawRectangle(rect: rectangleView.frame)
         popverView.showFromRect(rect: rectangleView.frame)
+    }
+    
+    func getMenus() -> [Any] {
+        
+        func createItem(_ title: String) -> LYPopoverItem{
+            let item = LYPopoverItem(title: title, icon: nil)
+            item.setClickedBlock(delegate: self) { (self, index) in
+                print("clicked item at index: \(index)")
+                self.pushViewController(index)
+            }
+            return item
+        }
+        let array = [["我我哦我", "滴滴滴", "卡卡卡", "嘛嘛嘛"],[createItem("发发发发"), createItem("明明")],["肉肉", "好", "谢谢"]]
+        let menus = array[Int(arc4random()%3)]
+        return menus
     }
     
     func drawRectangle(rect:CGRect)-> UIImage {
@@ -96,3 +114,11 @@ class ViewController: UIViewController, LYPopoverViewDelegate {
     }
 }
 
+extension ViewController: LYPopoverViewDelegate{
+    
+    func popoverView(_ popoverView: LYPopoverView, index: Int) {
+        
+        print("clicked title at index: \(index)")
+        pushViewController(index)
+    }
+}
