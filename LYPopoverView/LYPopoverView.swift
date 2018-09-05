@@ -49,21 +49,21 @@ class LYPopoverView: UIView {
         configureSubviews()
     }
     
-    init(frame: CGRect, titles: [String]) {
-        
+    override init(frame: CGRect) {
         super.init(frame: frame)
-        
-        _titles = titles
-        _cellCount = titles.count
         configureSubviews()
     }
     
-    init(frame: CGRect, items: [LYPopoverItem]) {
+    convenience init(frame: CGRect, titles: [String]) {
+    
+        self.init(frame: frame)
+        resetTitles(titles: titles)
+    }
+    
+    convenience init(frame: CGRect, items: [LYPopoverItem]) {
         
-        super.init(frame: frame)
-        _popoverItems = items
-        _cellCount = items.count
-        configureSubviews()
+        self.init(frame: frame)
+        resetItems(items: items)
     }
     
     func configureSubviews()
@@ -102,8 +102,6 @@ class LYPopoverView: UIView {
         _arrowImageView = UIImageView.init(frame: CGRect.init(x: (self.width - LYPopoverArrowWidth)/2.0, y: 0, width: LYPopoverArrowWidth, height: LYPopoverArrowHeight))
         addSubview(_arrowImageView)
         drawArrowImage()
-        
-        configureItemView()
     }
     
     func configureItemView()
