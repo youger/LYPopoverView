@@ -15,7 +15,6 @@
 		E8CB8A252137F429005E7DAD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E8CB8A1E2137F429005E7DAD /* LaunchScreen.storyboard */; };
 		E8CB8A262137F429005E7DAD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E8CB8A202137F429005E7DAD /* Main.storyboard */; };
 		E8CB8A272137F429005E7DAD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8CB8A222137F429005E7DAD /* AppDelegate.swift */; };
-		E8CB8A282137F429005E7DAD /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E8CB8A232137F429005E7DAD /* Info.plist */; };
 		E8CB8A2A2137F445005E7DAD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8CB8A292137F445005E7DAD /* ViewController.swift */; };
 		E8F8A2522135236200A37E2C /* LYPopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8F8A2512135236200A37E2C /* LYPopoverView.swift */; };
 /* End PBXBuildFile section */
@@ -146,7 +145,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E8CB8A282137F429005E7DAD /* Info.plist in Resources */,
 				E8CB8A262137F429005E7DAD /* Main.storyboard in Resources */,
 				E8CB8A242137F429005E7DAD /* Assets.xcassets in Resources */,
 				E8CB8A252137F429005E7DAD /* LaunchScreen.storyboard in Resources */,
