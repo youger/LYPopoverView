@@ -36,7 +36,12 @@ class LYPopoverView: UIView {
         didSet(newValue){
             //_arrowImageView.image = _arrowImageView.image?.imageWithColor(color1: newValue)
             _contentView.backgroundColor = newValue
-            drawArrowImage()
+            if newValue.isEqual(UIColor.white) {
+                _shadowView.layer.shadowColor = UIColor.black.cgColor
+            }else{
+                _shadowView.layer.shadowColor = UIColor.clear.cgColor
+            }
+            drawArrowImage(newValue)
         }
     }
     open var textColor = UIColor.white
@@ -72,7 +77,7 @@ class LYPopoverView: UIView {
         _shadowView.translatesAutoresizingMaskIntoConstraints = false
         _shadowView.backgroundColor = UIColor.init(white: 1, alpha: 1)
         _shadowView.layer.cornerRadius = 5.0
-        _shadowView.layer.shadowColor = UIColor.black.cgColor
+        _shadowView.layer.shadowColor = popoverBackgroundColor.cgColor
         _shadowView.layer.shadowOffset = CGSize.zero
         _shadowView.layer.shadowOpacity = 1.0
         _shadowView.layer.shadowRadius = LYPopoverViewContentPadding
@@ -101,7 +106,7 @@ class LYPopoverView: UIView {
         
         _arrowImageView = UIImageView.init(frame: CGRect.init(x: (self.width - LYPopoverArrowWidth)/2.0, y: 0, width: LYPopoverArrowWidth, height: LYPopoverArrowHeight))
         addSubview(_arrowImageView)
-        drawArrowImage()
+        drawArrowImage(UIColor.black);
     }
     
     func configureItemView()
@@ -140,33 +145,27 @@ class LYPopoverView: UIView {
         sizeToFit()
     }
     
-    func drawArrowImage(){
+    func drawArrowImage(_ color:UIColor){
         
         let scale = UIScreen.main.scale
-        let width = LYPopoverArrowWidth * scale
-        let height = LYPopoverArrowHeight * scale + 2
+        let width = LYPopoverArrowWidth
+        let height = LYPopoverArrowHeight
+        let lineWidth = 1/scale
         
         UIGraphicsBeginImageContextWithOptions(CGSize(width: width, height: height),  false, scale)
         let ctx = UIGraphicsGetCurrentContext()
         let path = UIBezierPath()
-        path.move(to: CGPoint.init(x: 1, y: height))
-        path.addLine(to: CGPoint.init(x: width - 1, y: height))
-        path.addLine(to: CGPoint.init(x: width / 2.0, y: 1))
-        path.addLine(to: CGPoint.init(x: 1, y: height))
+        path.move(to: CGPoint.init(x: lineWidth, y: height))
+        path.addLine(to: CGPoint.init(x: width / 2.0, y: lineWidth))
+        path.addLine(to: CGPoint.init(x: width - lineWidth, y: height))
+        
+        if color.isEqual(UIColor.white) {
+            ctx?.setShadow(offset: CGSize.init(width: 0, height: -lineWidth), blur: 2, color: UIColor.init(white: 0, alpha: 0.6).cgColor)
+        }
         
         ctx?.addPath(path.cgPath)
-        ctx?.setFillColor(_contentView.backgroundColor!.cgColor)
+        ctx?.setFillColor(color.cgColor)
         ctx?.fillPath()
-        
-        let bezier2Path = UIBezierPath()
-        bezier2Path.move(to: CGPoint.init(x: 0, y: height))
-        bezier2Path.addLine(to: CGPoint.init(x: width / 2.0, y: 0))
-        bezier2Path.addLine(to: CGPoint.init(x: width, y: height))
-
-        ctx?.saveGState()
-        ctx?.setShadow(offset: CGSize.init(width: 0, height: -2), blur: 2, color: UIColor.black.cgColor)
-        bezier2Path.stroke(with: .color, alpha: 0.6)
-        ctx?.restoreGState()
         
         let arrowImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
